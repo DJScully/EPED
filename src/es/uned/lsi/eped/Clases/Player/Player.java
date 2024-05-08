@@ -1,105 +1,121 @@
 package es.uned.lsi.eped.Clases.Player;
 
+import es.uned.lsi.eped.DataStructures.List;
 import es.uned.lsi.eped.DataStructures.ListIF;
+import es.uned.lsi.eped.pract2023_2024.PlayListIF;
 import es.uned.lsi.eped.pract2023_2024.PlayerIF;
 import es.uned.lsi.eped.pract2023_2024.TuneCollection;
-import es.uned.lsi.eped.Clases.Player.PlayList.PlayList;
+import es.uned.lsi.eped.Clases.Player.PlayBackQueue.PlayBackQueue;
+import es.uned.lsi.eped.Clases.Player.PlayListManager.PlayListManager;
+import es.uned.lsi.eped.Clases.Player.Query.Query;
+import es.uned.lsi.eped.Clases.Player.RecentlyPlayed.RecentlyPlayed;
+import es.uned.lsi.eped.Clases.Player.Tune.Tune;
 
 public class Player implements PlayerIF {
 
     private TuneCollection tunes;
-    private PlayList playList;
-    private int data;
+    private RecentlyPlayed recentlyPlayed;
+    private PlayListManager playListManager;
+    private PlayBackQueue playBackQueue;
 
-    public Player(TuneCollection tunes, int data) {
+    public Player(TuneCollection tunes, int maximo) {
         this.tunes = tunes;
-        this.data = data;
+        this.recentlyPlayed = new RecentlyPlayed(maximo);
+        this.playListManager = new PlayListManager();
+        this.playBackQueue = new PlayBackQueue();
     }
 
     @Override
     public ListIF<String> getPlayListIDs() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPlayListIDs'");
+        return playListManager.getIDs();
     }
 
     @Override
     public ListIF<Integer> getPlayListContent(String playListID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPlayListContent'");
+        return this.playListManager.getPlayList(playListID).getPlayList();
     }
 
     @Override
     public ListIF<Integer> getPlayBackQueue() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPlayBackQueue'");
+        return this.playBackQueue.getContent();
     }
 
     @Override
     public ListIF<Integer> getRecentlyPlayed() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRecentlyPlayed'");
+        return this.recentlyPlayed.getContent();
     }
 
     @Override
     public void createPlayList(String playListID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createPlayList'");
+        this.playListManager.createPlayList(playListID);
     }
 
     @Override
     public void removePlayList(String playListID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removePlayList'");
+        this.playListManager.removePlayList(playListID);
     }
 
     @Override
     public void addListOfTunesToPlayList(String playListID, ListIF<Integer> lT) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addListOfTunesToPlayList'");
+        this.playListManager.getPlayList(playListID).addListOfTunes(lT);
     }
 
     @Override
     public void addSearchToPlayList(String playListID, String t, String a, String g, String al, int min_y, int max_y,
             int min_d, int max_d) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addSearchToPlayList'");
+            ListIF<Tune> pl = new List<Tune>();
+            Query q = new Query(t, a, g, al, min_y, max_y, min_d, max_d);
+            for (int i = 0; i < this.playListManager.getPlayList(playListID).getPlayList().size(); i++) {
+                if (tunes.getTune(this.playListManager.getPlayList(playListID).getPlayList().get(i)).match(q)) {
+                    //this.playListManager.getPlayList(playListID).addTune(i);
+                    pl.insert(i, tunes.getTune(this.playListManager.getPlayList(playListID).getPlayList().get(i)));
+                   
+                }
+            }
+            this.playListManager.getPlayList(playListID).getPlayList().size();
     }
 
     @Override
     public void removeTuneFromPlayList(String playListID, int tuneID) {
+        this.playListManager.getPlayList(playListID).removeTune(tuneID);
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'removeTuneFromPlayList'");
     }
 
     @Override
     public void addListOfTunesToPlayBackQueue(ListIF<Integer> lT) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addListOfTunesToPlayBackQueue'");
+        this.playBackQueue.addTunes(lT);
     }
 
     @Override
     public void addSearchToPlayBackQueue(String t, String a, String g, String al, int min_y, int max_y, int min_d,
             int max_d) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addSearchToPlayBackQueue'");
+        ListIF<Tune> pl = new List<Tune>();
+        Query q = new Query(t, a, g, al, min_y, max_y, min_d, max_d);
+        for (int i = 0; i < playBackQueue.getContent().size(); i++) {
+            if (tunes.getTune(this.playBackQueue.getContent().get(i)).match(q)) {
+                pl.insert(i, tunes.getTune(this.playBackQueue.getContent().get(i)));
+            }
+        }
     }
 
     @Override
     public void addPlayListToPlayBackQueue(String playListID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addPlayListToPlayBackQueue'");
+        PlayListIF p = this.playListManager.getPlayList(playListID);
+        this.playBackQueue.addTunes(p.getPlayList());
     }
 
     @Override
     public void clearPlayBackQueue() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clearPlayBackQueue'");
+        this.playBackQueue.clear();
     }
 
     @Override
     public void play() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'play'");
+        if (!this.playBackQueue.isEmpty()) {
+            int id = this.playBackQueue.getFirstTune();
+            this.recentlyPlayed.addTune(id);
+        }
     }
 
     
