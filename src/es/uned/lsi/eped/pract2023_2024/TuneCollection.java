@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-import es.uned.lsi.eped.Clases.Player.Tune.Tune;
 import es.uned.lsi.eped.DataStructures.IteratorIF;
 import es.uned.lsi.eped.DataStructures.List;
 import es.uned.lsi.eped.DataStructures.ListIF;

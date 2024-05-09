@@ -2,7 +2,6 @@ package es.uned.lsi.eped.pract2023_2024;
 
 import java.util.StringTokenizer;
 
-import es.uned.lsi.eped.Clases.Player.Player;
 import es.uned.lsi.eped.DataStructures.IteratorIF;
 import es.uned.lsi.eped.DataStructures.List;
 import es.uned.lsi.eped.DataStructures.ListIF;
