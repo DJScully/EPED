@@ -78,8 +78,6 @@ public class Player implements PlayerIF {
     @Override
     public void removeTuneFromPlayList(String playListID, int tuneID) {
         this.playListManager.getPlayList(playListID).removeTune(tuneID);
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeTuneFromPlayList'");
     }
 
     @Override
